@@ -1,69 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:zypto_pulse/providers/theme_provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({super.key});
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    final isDarkMode = themeMode == ThemeMode.dark;
+
     return Scaffold(
-      backgroundColor: Color(0xFF141A22),
       appBar: AppBar(
-        backgroundColor: Color(0xFF141A22),
-        elevation: 0,
+        title: const Text("Settings"),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.go('/home'),
-        ),
-        title: Text(
-          "Settings",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
         ),
       ),
       body: ListView(
         children: [
-          _buildSettingsTile(
-            icon: LucideIcons.globe,
-            title: "Language",
-            subtitle: "English",
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: const Text("Language"),
+            trailing: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("English"),
+                Icon(Icons.arrow_forward_ios, size: 16),
+              ],
+            ),
             onTap: () {},
           ),
-          _buildSettingsTile(
-            icon: LucideIcons.moon,
-            title: "Appearance",
-            subtitle: "Use Device Settings",
-            onTap: () {},
+          ListTile(
+            leading: const Icon(Icons.brightness_6),
+            title: const Text("Appearance"),
+            trailing: Switch(
+              value: isDarkMode,
+              onChanged:
+                  (value) => ref.read(themeProvider.notifier).toggleTheme(),
+            ),
           ),
-          _buildSettingsTile(
-            icon: LucideIcons.gift,
-            title: "About Us",
-            subtitle: "v1.0.0",
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text("About Us"),
+            trailing: const Text("v1.2.3"),
             onTap: () {},
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSettingsTile({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      leading: Icon(icon, color: Colors.tealAccent),
-      title: Text(title, style: TextStyle(color: Colors.white, fontSize: 16)),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(color: Colors.grey, fontSize: 14),
-      ),
-      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
-      onTap: onTap,
     );
   }
 }
